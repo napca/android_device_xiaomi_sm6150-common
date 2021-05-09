@@ -97,7 +97,7 @@ PRODUCT_PACKAGES += \
     libvolumelistener
 
 PRODUCT_COPY_FILES += \
-    $(call find-copy-subdir-files,*,$(LOCAL_PATH)/audio/,$(TARGET_COPY_OUT_VENDOR)/etc)
+    $(call find-copy-subdir-files,*,$(LOCAL_PATH)/configs/audio/,$(TARGET_COPY_OUT_VENDOR)/etc)
 
 PRODUCT_COPY_FILES += \
     frameworks/av/services/audiopolicy/config/a2dp_in_audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/a2dp_in_audio_policy_configuration.xml \
@@ -118,9 +118,10 @@ PRODUCT_COPY_FILES += \
 # Bluetooth
 PRODUCT_PACKAGES += \
     android.hardware.bluetooth.audio@2.0-impl \
-    audio.bluetooth.default \
+    com.qualcomm.qti.bluetooth_audio@1.0.vendor \
+    libbtconfigstore \
     libbthost_if \
-    vendor.qti.hardware.bluetooth_audio@2.0.vendor \
+    vendor.qti.hardware.bluetooth_audio@2.1.vendor \
     vendor.qti.hardware.btconfigstore@1.0.vendor \
     vendor.qti.hardware.btconfigstore@2.0.vendor
 
@@ -190,13 +191,27 @@ PRODUCT_PACKAGES += \
     libqti_vndfwk_detect.vendor \
     libvndfwk_detect_jni.qti.vendor
 
+# Freeform Multiwindow
+PRODUCT_COPY_FILES += \
+    frameworks/native/data/etc/android.software.freeform_window_management.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.software.freeform_window_management.xml
+
 # GPS
 PRODUCT_PACKAGES += \
     android.hardware.gnss@2.1-impl-qti:64 \
     android.hardware.gnss@2.1-service-qti \
     libbatching \
     libgeofencing \
-    libgnss
+    libgnss \
+    libsensorndkbridge
+
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/gps/apdr.conf:$(TARGET_COPY_OUT_VENDOR)/etc/apdr.conf \
+    $(LOCAL_PATH)/configs/gps/flp.conf:$(TARGET_COPY_OUT_VENDOR)/etc/flp.conf \
+    $(LOCAL_PATH)/configs/gps/gnss_antenna_info.conf:$(TARGET_COPY_OUT_VENDOR)/etc/gnss_antenna_info.conf \
+    $(LOCAL_PATH)/configs/gps/gps.conf:$(TARGET_COPY_OUT_VENDOR)/etc/gps.conf \
+    $(LOCAL_PATH)/configs/gps/izat.conf:$(TARGET_COPY_OUT_VENDOR)/etc/izat.conf \
+    $(LOCAL_PATH)/configs/gps/lowi.conf:$(TARGET_COPY_OUT_VENDOR)/etc/lowi.conf \
+    $(LOCAL_PATH)/configs/gps/sap.conf:$(TARGET_COPY_OUT_VENDOR)/etc/sap.conf
 
 PRODUCT_COPY_FILES += \
     $(call find-copy-subdir-files,*,$(LOCAL_PATH)/gps/etc/,$(TARGET_COPY_OUT_VENDOR)/etc)
@@ -205,6 +220,10 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     android.hardware.health@2.1-impl-qti:64 \
     android.hardware.health@2.1-service
+
+# Handheld hardware
+PRODUCT_COPY_FILES += \
+    frameworks/native/data/etc/handheld_core_hardware.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/handheld_core_hardware.xml
 
 # IFAA manager
 PRODUCT_PACKAGES += \
@@ -230,7 +249,7 @@ PRODUCT_PACKAGES += \
 
 # IRSC
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/sec_config:$(TARGET_COPY_OUT_VENDOR)/etc/sec_config
+    $(LOCAL_PATH)/configs/security/sec_config:$(TARGET_COPY_OUT_VENDOR)/etc/sec_config
 
 # Lights
 PRODUCT_PACKAGES += \
@@ -238,12 +257,13 @@ PRODUCT_PACKAGES += \
 
 # LiveDisplay
 PRODUCT_PACKAGES += \
-    vendor.lineage.livedisplay@2.0-service-sdm \
-    vendor.lineage.livedisplay@2.0-service.xiaomi_sm6150
+    vendor.lineage.livedisplay@2.1-service.xiaomi_sm6150
 
 # Media
 PRODUCT_PACKAGES += \
     libc2dcolorconvert \
+    libcodec2_vndk.vendor \
+    libcodec2_hidl@1.0.vendor \
     libmm-omxcore \
     libOmxAacEnc \
     libOmxAmrEnc \
@@ -256,10 +276,10 @@ PRODUCT_PACKAGES += \
     libstagefrighthw
 
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/media/media_codecs.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs.xml \
-    $(LOCAL_PATH)/media/media_codecs_performance.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_performance.xml \
-    $(LOCAL_PATH)/media/media_profiles_V1_0.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_profiles_V1_0.xml \
-    $(LOCAL_PATH)/media/system_properties.xml:$(TARGET_COPY_OUT_VENDOR)/etc/system_properties.xml
+    $(LOCAL_PATH)/configs/media/media_codecs.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs.xml \
+    $(LOCAL_PATH)/configs/media/media_codecs_performance.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_performance.xml \
+    $(LOCAL_PATH)/configs/media/media_profiles_V1_0.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_profiles_V1_0.xml \
+    $(LOCAL_PATH)/configs/media/system_properties.xml:$(TARGET_COPY_OUT_VENDOR)/etc/system_properties.xml
 
 PRODUCT_COPY_FILES += \
     frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_google_audio.xml \
@@ -296,7 +316,7 @@ PRODUCT_PACKAGES += \
 
 # QTI
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/qti_whitelist.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/sysconfig/qti_whitelist.xml
+    $(LOCAL_PATH)/configs/permissions/qti_whitelist.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/sysconfig/qti_whitelist.xml
 
 # Ramdisk
 PRODUCT_PACKAGES += \
@@ -306,6 +326,7 @@ PRODUCT_PACKAGES += \
     init.mi.usb.sh \
     init.power.rc \
     init.qcom.rc \
+    init.qcom.early_boot.sh \
     init.qcom.usb.rc \
     init.qcom.usb.sh \
     init.recovery.qcom.rc \
@@ -317,9 +338,10 @@ PRODUCT_PACKAGES += \
 
 # RIL
 PRODUCT_PACKAGES += \
-    android.hardware.radio.config@1.1 \
+    android.hardware.radio.config@1.2 \
+    android.hardware.radio.deprecated@1.0 \
     android.hardware.radio@1.5 \
-    android.hardware.secure_element@1.1 \
+    android.hardware.secure_element@1.2 \
     libril \
     librilutils \
     libjson \
@@ -333,7 +355,7 @@ PRODUCT_PACKAGES += \
 
 # Seccomp policy
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/seccomp/mediacodec-seccomp.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/mediacodec.policy
+    $(LOCAL_PATH)/configs/seccomp/mediacodec-seccomp.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/mediacodec.policy
 
 # Sensor
 PRODUCT_PACKAGES += \
@@ -349,6 +371,7 @@ PRODUCT_SOONG_NAMESPACES += \
 # Dependencies 
 PRODUCT_PACKAGES += \
     libavservices_minijail.vendor \
+    ibhidltransport.vendor \
     libhwbinder.vendor
 
 # Speed profile services and wifi-service to reduce RAM and storage.
@@ -382,7 +405,7 @@ PRODUCT_PACKAGES += \
     vendor.qti.hardware.vibrator.service
 
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/excluded-input-devices.xml:$(TARGET_COPY_OUT_VENDOR)//etc/excluded-input-devices.xml
+    $(LOCAL_PATH)/configs/input/excluded-input-devices.xml:$(TARGET_COPY_OUT_VENDOR)//etc/excluded-input-devices.xml
 
 # VNDK
 PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := strict
@@ -406,9 +429,9 @@ PRODUCT_PACKAGES +=\
     wifi-mac-generator
 
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/wifi/p2p_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/p2p_supplicant_overlay.conf \
-    $(LOCAL_PATH)/wifi/WCNSS_qcom_cfg.ini:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/WCNSS_qcom_cfg.ini \
-    $(LOCAL_PATH)/wifi/wpa_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/wpa_supplicant_overlay.conf
+    $(LOCAL_PATH)/configs/wifi/p2p_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/p2p_supplicant_overlay.conf \
+    $(LOCAL_PATH)/configs/wifi/WCNSS_qcom_cfg.ini:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/WCNSS_qcom_cfg.ini \
+    $(LOCAL_PATH)/configs/wifi/wpa_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/wpa_supplicant_overlay.conf
 
 # WiFi Display
 PRODUCT_PACKAGES += \

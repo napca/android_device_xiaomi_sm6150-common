@@ -27,6 +27,7 @@
 
 import /vendor/etc/init/hw/init.power.rc
 import /vendor/etc/init/hw/init.qcom.usb.rc
+import /vendor/etc/init/hw/init.target.rc
 
 on early-init
     # Disable EAS
@@ -167,6 +168,14 @@ on init
     write /proc/sys/kernel/sched_lib_name "UnityMain,libunity.so"
     write /proc/sys/kernel/sched_lib_mask_force 255
 
+on late-init
+    # Start services for bootanim
+    start surfaceflinger
+    start bootanim
+    start vendor.hwcomposer-2-4
+    start vendor.configstore-hal
+    start vendor.qti.hardware.display.allocator
+
 on fs
     mount_all --early
     chown root system /mnt/vendor/persist
@@ -227,6 +236,8 @@ on early-boot
 
     chown system system /mnt/vendor/persist/data/pfm/licenses
     chmod 0775 /mnt/vendor/persist/data/pfm/licenses
+
+    exec u:r:vendor_qti_init_shell:s0 -- /vendor/bin/init.qcom.early_boot.sh
 
 on boot
     start rfs_access
@@ -629,6 +640,12 @@ on property:sys.shutdown.requested=*
     write /sys/kernel/shutdown_wlan/shutdown 1
     stop cnss-daemon
 
+service mlid /vendor/bin/mlid
+    class late_start
+    user gps
+    group gps
+    socket mlid stream 0666 gps gps
+
 service loc_launcher /vendor/bin/loc_launcher
     class late_start
     user gps
@@ -681,6 +698,17 @@ on property:vendor.opengles.version=*
 on property:vendor.gpu.available_frequencies=*
     setprop ro.vendor.gpu.available_frequencies ${vendor.gpu.available_frequencies}
 
+service vendor.atfwd /vendor/bin/ATFWD-daemon
+    class late_start
+    user system
+    group system radio
+
+on property:persist.vendor.radio.atfwd.start=false
+    stop vendor.atfwd
+
+on property:vendor.radio.atfwd.start=false
+    stop vendor.atfwd
+
 service vendor.audio-hal /vendor/bin/hw/android.hardware.audio.service
     override
     class hal
@@ -712,13 +740,3 @@ service nv_mac /vendor/bin/nv_mac
 on property:persist.sys.device_provisioned=1
     setprop dalvik.vm.dex2oat-cpu-set 0,1,2,3,4,5,7
     setprop dalvik.vm.dex2oat-threads 6
-
-on property:sys.boot_completed=1
-    start init-fastcharge-sh
-
-service init-fastcharge-sh /vendor/bin/init.fastcharge.sh
-    class main
-    user root
-    group root system
-    disabled
-    oneshot
